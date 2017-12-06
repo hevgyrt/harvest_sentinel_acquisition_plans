@@ -25,7 +25,7 @@ import os
 
 def extract_S1_entries(infile, outfile, outpath):
     """ Method for extracting entries in a predifined AOI. Works for the
-        current setup for sentinel-2.kml files."""
+        current setup for sentinel-1.kml files."""
 
     # Defining Norwegian area of interest:
     norwegian_AOI_poly = "POLYGON((-29.307389598466298 55.7151475256469,34.51470787304025 55.7151475256469,34.51470787304025 83.54659771121828,-29.307389598466298 83.54659771121828,-29.307389598466298 55.7151475256469))"
@@ -51,8 +51,6 @@ def extract_S1_entries(infile, outfile, outpath):
 
         if not norwegian_AOI_intersection:
             pm.getparent().remove(pm)
-        else:
-            vis = pm.find(find_prefix + 'visibility')
 
     try:
         output = codecs.open(str(outpath + outfile) ,'w','utf-8')

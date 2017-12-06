@@ -36,6 +36,7 @@ def extract_S2_entries(infile, outfile, outpath):
     find_prefix = './/{' + nsmap + '}'
     folders = infile_tree.findall(find_prefix + 'Folder')
 
+    # Only extracting NOMINAL mode
     for folder in folders:
         name = folder.find(find_prefix + 'name')
         if name.text == 'NOBS':
@@ -57,9 +58,6 @@ def extract_S2_entries(infile, outfile, outpath):
         for i, pair in enumerate(coordinates):
             coordinates[i] = pair.replace(',', ' ')
 
-            #lat_lon = pair.split(',')
-            #lat.append(float(lat_lon[1]))
-            #lon.append(float(lat_lon[0]))
         placemark_polygon = "POLYGON (( %s ))" % delimiter.join(coordinates)
         placemark_wtk_polygon =  ogr.CreateGeometryFromWkt(placemark_polygon)
         norwegian_AOI_intersection = norwegian_AOI_wtk_polygon.Intersects(placemark_wtk_polygon)
@@ -70,7 +68,6 @@ def extract_S2_entries(infile, outfile, outpath):
             #vis = pm.find(find_prefix + 'visibility')
             #vis.text = '1'
 
-    #print ET.tostring(infile_tree)
     try:
         output = codecs.open(str(outpath + outfile) ,'w','utf-8')
         infile_tree.write(output,encoding='utf-8',method='xml',pretty_print=True)
