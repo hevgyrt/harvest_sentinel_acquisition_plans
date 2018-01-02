@@ -95,7 +95,7 @@ for key in kml_dict.keys():
     start_date = datetime.datetime.strptime(key.split('_')[-2],dateformat)
     today =  datetime.datetime.now()
     if start_date < today < end_date:
-        if key.startswith('Sentinel-1A'):
+        if (key.startswith('Sentinel-1A') or key.startswith('S1A')):
             if S1A_key:
                 # If you have multiple files covering today's date, choose the one with latest end_date
                 this_end_date = datetime.datetime.strptime(S1A_key.split('_')[-1].split('.')[0],dateformat)
@@ -103,21 +103,21 @@ for key in kml_dict.keys():
                     S1A_key = key
             else:
                 S1A_key = key
-        elif key.startswith('Sentinel-1B'):
+        elif (key.startswith('Sentinel-1B') or key.startswith('S1B')):
             if S1B_key:
                 this_end_date = datetime.datetime.strptime(S1B_key.split('_')[-1].split('.')[0],dateformat)
                 if this_end_date < end_date:
                     S1B_key = key
             else:
                 S1B_key = key
-        elif key.startswith('Sentinel-2A'):
+        elif (key.startswith('Sentinel-2A') or key.startswith('S2A')):
             if S2A_key:
                 this_end_date = datetime.datetime.strptime(S2A_key.split('_')[-1].split('.')[0],dateformat)
                 if this_end_date < end_date:
                     S2A_key = key
             else:
                 S2A_key = key
-        elif key.startswith('Sentinel-2B'):
+        elif (key.startswith('Sentinel-2B') or key.startswith('S2B')):
             if S2B_key:
                 this_end_date = datetime.datetime.strptime(S2B_key.split('_')[-1].split('.')[0],dateformat)
                 if this_end_date < end_date:
@@ -127,10 +127,29 @@ for key in kml_dict.keys():
 
 
 # Store original .kml files and extract values
-s2a_OK = kml_file_storage_and_extraction(satellite='Sentinel-2',file_url=kml_dict[S2A_key], output_filename='S2A_acquisition_plan', output_path=storage_path, extract_area=True)
-s2b_OK = kml_file_storage_and_extraction(satellite='Sentinel-2',file_url=kml_dict[S2B_key], output_filename='S2B_acquisition_plan', output_path=storage_path, extract_area=True)
-s1a_OK = kml_file_storage_and_extraction(satellite='Sentinel-1',file_url=kml_dict[S1A_key], output_filename='S1A_acquisition_plan', output_path=storage_path, extract_area=True)
-s1b_OK = kml_file_storage_and_extraction(satellite='Sentinel-1',file_url=kml_dict[S1B_key], output_filename='S1B_acquisition_plan', output_path=storage_path, extract_area=True)
+if S2A_key:
+    s2a_OK = kml_file_storage_and_extraction(satellite='Sentinel-2',file_url=kml_dict[S2A_key], output_filename='S2A_acquisition_plan', output_path=storage_path, extract_area=True)
+else:
+    print "Could not retreive data for Sentinel-2A"
+    s2a_OK = False
+
+if S2B_key:
+    s2b_OK = kml_file_storage_and_extraction(satellite='Sentinel-2',file_url=kml_dict[S2B_key], output_filename='S2B_acquisition_plan', output_path=storage_path, extract_area=True)
+else:
+    print "Could not retreive data for Sentinel-2B"
+    s2b_OK = False
+
+if S1A_key:
+    s1a_OK = kml_file_storage_and_extraction(satellite='Sentinel-1',file_url=kml_dict[S1A_key], output_filename='S1A_acquisition_plan', output_path=storage_path, extract_area=True)
+else:
+    print "Could not retreive data for Sentinel-1A"
+    s1a_OK = False
+
+if S1B_key:
+    s1b_OK = kml_file_storage_and_extraction(satellite='Sentinel-1',file_url=kml_dict[S1B_key], output_filename='S1B_acquisition_plan', output_path=storage_path, extract_area=True)
+else:
+    print "Could not retreive data for Sentinel-1B"
+    s1b_OK = False
 
 if not (s2a_OK and s2b_OK and s1a_OK and s1b_OK):
     print "\nFailed to download all. See comments above."
