@@ -18,7 +18,6 @@ Copyright:     (c) Norwegian Meteorological Institute, 2017
 """
 import lxml.etree as ET
 import numpy as np
-import matplotlib.pyplot as plt
 from osgeo import ogr
 import codecs
 import os

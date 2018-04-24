@@ -80,7 +80,14 @@ for li in liElements:
                 element_text = c.text
                 start_text = element_text.split()[0]
                 if not element_text.startswith('Sentinel'):
-                    kml_dict[href.split('/')[-1]] = str(url_kml_prefix + href)
+                    if href.endswith('.kml'):
+                        kml_dict[href.split('/')[-1]] = str(url_kml_prefix + href)
+                    else:
+                        for i in range(len(href.split('/'))):
+                            if href.split('/')[-i].endswith('kml'):
+                                kml_dict[href.split('/')[-i]] = str(url_kml_prefix + href)
+                            
+
 
 # Parse filenames to find latest file for each satellite. Also check that "today" is within start and end date
 dateformat = '%Y%m%dT%H%M%S'
