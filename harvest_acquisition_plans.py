@@ -86,7 +86,7 @@ for li in liElements:
                         for i in range(len(href.split('/'))):
                             if href.split('/')[-i].endswith('kml'):
                                 kml_dict[href.split('/')[-i]] = str(url_kml_prefix + href)
-                            
+
 
 
 # Parse filenames to find latest file for each satellite. Also check that "today" is within start and end date
@@ -98,9 +98,16 @@ S2A_key = None
 S2B_key = None
 
 for key in kml_dict.keys():
-    end_date = datetime.datetime.strptime(key.split('_')[-1].split('.')[0],dateformat)
-    start_date = datetime.datetime.strptime(key.split('_')[-2],dateformat)
+
+    # Parse date formats
+    splitted_fname = key.split('_')
+    if not (len(splitted_fname)>1):
+        splitted_fname = key.split('-')
+
+    end_date = datetime.datetime.strptime(splitted_fname[-1].split('.')[0],dateformat)
+    start_date = datetime.datetime.strptime(splitted_fname[-2],dateformat)
     today =  datetime.datetime.now()
+
     if start_date < today < end_date:
         if (key.startswith('Sentinel-1A') or key.startswith('S1A')):
             if S1A_key:
