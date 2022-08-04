@@ -124,14 +124,14 @@ for key in kml_dict.keys():
                     S1B_key = key
             else:
                 S1B_key = key
-        elif (key.startswith('Sentinel-2A') or key.startswith('S2A')):
+        elif (key.startswith('MP_ACQ_KML')):
             if S2A_key:
                 this_end_date = datetime.datetime.strptime(S2A_key.split('_')[-1].split('.')[0],dateformat)
                 if this_end_date < end_date:
                     S2A_key = key
             else:
                 S2A_key = key
-        elif (key.startswith('Sentinel-2B') or key.startswith('S2B')):
+        elif (key.startswith('MP_ACQ__KML')):
             if S2B_key:
                 this_end_date = datetime.datetime.strptime(S2B_key.split('_')[-1].split('.')[0],dateformat)
                 if this_end_date < end_date:
