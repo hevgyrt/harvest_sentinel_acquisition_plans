@@ -64,15 +64,26 @@ storage_path = str(os.getcwd() + '/')
 s1_tree = html.parse(ul2.urlopen(s1_url))
 s2_tree = html.parse(ul2.urlopen(s2_url))
 
-liElements = []
-for tree in [s1_tree, s2_tree]:
+liElementsS1 = []
+for tree in [s1_tree]:
     bodyElement = tree.findall('./')[1]
     for li in bodyElement.findall('.//li'):
-        liElements.append(li)
+        liElementsS1.append(li)
+
+liElementsS2A = []
+liElementsS2B = []
+for tree in [s2_tree]:
+    bodyElement = tree.findall('./')[1]
+    for div in bodyElement.find(".//div[@class='sentinel-2a']"):
+        for li in div.findall('.//li'):
+            liElementsS2A.append(li)
+    for div in bodyElement.find(".//div[@class='sentinel-2b']"):
+        for li in div.findall('.//li'):
+            liElementsS2B.append(li)
 
 # Parse elements following a certain pattern i.e. li-element with href attribute. Text starting with date and whitespace
-kml_dict = {}
-for li in liElements:
+kml_dictS1 = {}
+for li in liElementsS1:
     for c in  li.getchildren():
         if c.attrib.has_key('href'):
             href = c.attrib['href']
@@ -81,13 +92,44 @@ for li in liElements:
                 start_text = element_text.split()[0]
                 if not element_text.startswith('Sentinel'):
                     if href.endswith('.kml'):
-                        kml_dict[href.split('/')[-1]] = str(url_kml_prefix + href)
+                        kml_dictS1[href.split('/')[-1]] = str(url_kml_prefix + href)
                     else:
                         for i in range(len(href.split('/'))):
                             if href.split('/')[-i].endswith('kml'):
-                                kml_dict[href.split('/')[-i]] = str(url_kml_prefix + href)
+                                kml_dictS1[href.split('/')[-i]] = str(url_kml_prefix + href)
+
+kml_dictS2A = {}
+for li in liElementsS2A:
+    for c in  li.getchildren():
+        if c.attrib.has_key('href'):
+            href = c.attrib['href']
+            if href.startswith('/documents'):
+                element_text = c.text
+                start_text = element_text.split()[0]
+                if not element_text.startswith('Sentinel'):
+                    if href.endswith('.kml'):
+                        kml_dictS2A[href.split('/')[-1]] = str(url_kml_prefix + href)
+                    else:
+                        for i in range(len(href.split('/'))):
+                            if href.split('/')[-i].endswith('kml'):
+                                kml_dictS2A[href.split('/')[-i]] = str(url_kml_prefix + href)
 
 
+kml_dictS2B = {}
+for li in liElementsS2B:
+    for c in  li.getchildren():
+        if c.attrib.has_key('href'):
+            href = c.attrib['href']
+            if href.startswith('/documents'):
+                element_text = c.text
+                start_text = element_text.split()[0]
+                if not element_text.startswith('Sentinel'):
+                    if href.endswith('.kml'):
+                        kml_dictS2B[href.split('/')[-1]] = str(url_kml_prefix + href)
+                    else:
+                        for i in range(len(href.split('/'))):
+                            if href.split('/')[-i].endswith('kml'):
+                                kml_dictS2B[href.split('/')[-i]] = str(url_kml_prefix + href)
 
 # Parse filenames to find latest file for each satellite. Also check that "today" is within start and end date
 dateformat = '%Y%m%dT%H%M%S'
@@ -97,7 +139,7 @@ S1B_key = None
 S2A_key = None
 S2B_key = None
 
-for key in kml_dict.keys():
+for key in kml_dictS1.keys():
 
     # Parse date formats
     splitted_fname = key.split('_')
@@ -124,14 +166,40 @@ for key in kml_dict.keys():
                     S1B_key = key
             else:
                 S1B_key = key
-        elif (key.startswith('MP_ACQ_KML')):
+
+for key in kml_dictS2A.keys():
+
+    # Parse date formats
+    splitted_fname = key.split('_')
+    if not (len(splitted_fname)>1):
+        splitted_fname = key.split('-')
+
+    end_date = datetime.datetime.strptime(splitted_fname[-1].split('.')[0],dateformat)
+    start_date = datetime.datetime.strptime(splitted_fname[-2],dateformat)
+    today =  datetime.datetime.now()
+
+    if start_date < today < end_date:
+        if (key.startswith('MP_ACQ__KML')):
             if S2A_key:
                 this_end_date = datetime.datetime.strptime(S2A_key.split('_')[-1].split('.')[0],dateformat)
                 if this_end_date < end_date:
                     S2A_key = key
             else:
                 S2A_key = key
-        elif (key.startswith('MP_ACQ__KML')):
+
+for key in kml_dictS2B.keys():
+
+    # Parse date formats
+    splitted_fname = key.split('_')
+    if not (len(splitted_fname)>1):
+        splitted_fname = key.split('-')
+
+    end_date = datetime.datetime.strptime(splitted_fname[-1].split('.')[0],dateformat)
+    start_date = datetime.datetime.strptime(splitted_fname[-2],dateformat)
+    today =  datetime.datetime.now()
+
+    if start_date < today < end_date:
+        if (key.startswith('MP_ACQ__KML')):
             if S2B_key:
                 this_end_date = datetime.datetime.strptime(S2B_key.split('_')[-1].split('.')[0],dateformat)
                 if this_end_date < end_date:
@@ -142,25 +210,25 @@ for key in kml_dict.keys():
 
 # Store original .kml files and extract values
 if S2A_key:
-    s2a_OK = kml_file_storage_and_extraction(satellite='Sentinel-2',file_url=kml_dict[S2A_key], output_filename='S2A_acquisition_plan', output_path=storage_path, extract_area=True)
+    s2a_OK = kml_file_storage_and_extraction(satellite='Sentinel-2',file_url=kml_dictS2A[S2A_key], output_filename='S2A_acquisition_plan', output_path=storage_path, extract_area=True)
 else:
     print "Could not retreive data for Sentinel-2A"
     s2a_OK = False
 
 if S2B_key:
-    s2b_OK = kml_file_storage_and_extraction(satellite='Sentinel-2',file_url=kml_dict[S2B_key], output_filename='S2B_acquisition_plan', output_path=storage_path, extract_area=True)
+    s2b_OK = kml_file_storage_and_extraction(satellite='Sentinel-2',file_url=kml_dictS2B[S2B_key], output_filename='S2B_acquisition_plan', output_path=storage_path, extract_area=True)
 else:
     print "Could not retreive data for Sentinel-2B"
     s2b_OK = False
 
 if S1A_key:
-    s1a_OK = kml_file_storage_and_extraction(satellite='Sentinel-1',file_url=kml_dict[S1A_key], output_filename='S1A_acquisition_plan', output_path=storage_path, extract_area=True)
+    s1a_OK = kml_file_storage_and_extraction(satellite='Sentinel-1',file_url=kml_dictS1[S1A_key], output_filename='S1A_acquisition_plan', output_path=storage_path, extract_area=True)
 else:
     print "Could not retreive data for Sentinel-1A"
     s1a_OK = False
 
 if S1B_key:
-    s1b_OK = kml_file_storage_and_extraction(satellite='Sentinel-1',file_url=kml_dict[S1B_key], output_filename='S1B_acquisition_plan', output_path=storage_path, extract_area=True)
+    s1b_OK = kml_file_storage_and_extraction(satellite='Sentinel-1',file_url=kml_dictS1[S1B_key], output_filename='S1B_acquisition_plan', output_path=storage_path, extract_area=True)
 else:
     print "Could not retreive data for Sentinel-1B"
     s1b_OK = False

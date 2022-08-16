@@ -33,7 +33,7 @@ def extract_S2_entries(infile, outfile, outpath):
            "POLYGON((-11.25 70.43,-5.03 70.43,-5.03 71.72,-11.25 71.72,-11.25 70.43))"# Jan Mayen
            ]
     polygons = [ogr.CreateGeometryFromWkt(AOI[i]) for i in range(len(AOI))]
-    print polygons
+    #print polygons
     #for polygon in AOI:
     #    norwegian_AOI_wtk_polygon =  ogr.CreateGeometryFromWkt(norwegian_AOI_poly)
 
@@ -72,7 +72,7 @@ def extract_S2_entries(infile, outfile, outpath):
         for polygon in polygons:
             intersects.append(polygon.Intersects(placemark_wtk_polygon))
         #norwegian_AOI_intersection = norwegian_AOI_wtk_polygon.Intersects(placemark_wtk_polygon)
-        print intersects
+        #print intersects
 
         #if not norwegian_AOI_intersection:
         if not any(intersects):
