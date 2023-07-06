@@ -52,22 +52,22 @@ def extract_S1_entries(infile, outfile, outpath):
             pm.getparent().remove(pm)
 
     try:
-        output = codecs.open(str(outpath + outfile) ,'w','utf-8')
-        infile_tree.write(output,encoding='utf-8',method='xml',pretty_print=True)
-        output.close()
+        #output = codecs.open(str(outpath + outfile) ,'w','utf-8')
+        infile_tree.write(str(outpath + outfile),encoding='utf-8',method='xml',pretty_print=True)
+        #output.close()
         return True
     except:
-        print "Could not write %s to %s" %(infile, str(outpath + outfile))
+        print("Could not write %s to %s" %(infile, str(outpath + outfile)))
         return True
 
 
 def main():
-    infile = 'Sentinel-1B_MP_20171115T160000_20171207T180000.kml'
+    infile = 'S1A_acquisition_plan.kml'
     outpath = os.getcwd() + '/'
     outfile = 'test_s1.kml'
     extrac_values = extract_S1_entries(infile, outfile, outpath)
     if extrac_values:
-        print "Script worked!"
+        print("Script worked!")
 
 if __name__=='__main__':
     main()

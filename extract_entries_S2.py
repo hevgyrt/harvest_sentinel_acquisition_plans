@@ -33,7 +33,7 @@ def extract_S2_entries(infile, outfile, outpath):
            "POLYGON((-11.25 70.43,-5.03 70.43,-5.03 71.72,-11.25 71.72,-11.25 70.43))"# Jan Mayen
            ]
     polygons = [ogr.CreateGeometryFromWkt(AOI[i]) for i in range(len(AOI))]
-    print polygons
+    #print polygons
     #for polygon in AOI:
     #    norwegian_AOI_wtk_polygon =  ogr.CreateGeometryFromWkt(norwegian_AOI_poly)
 
@@ -72,7 +72,7 @@ def extract_S2_entries(infile, outfile, outpath):
         for polygon in polygons:
             intersects.append(polygon.Intersects(placemark_wtk_polygon))
         #norwegian_AOI_intersection = norwegian_AOI_wtk_polygon.Intersects(placemark_wtk_polygon)
-        print intersects
+        #print intersects
 
         #if not norwegian_AOI_intersection:
         if not any(intersects):
@@ -80,16 +80,14 @@ def extract_S2_entries(infile, outfile, outpath):
         #else:
         #    vis = pm.find(find_prefix + 'visibility')
         #    vis.text = '1'
-
     try:
-        output = codecs.open(str(outpath + outfile) ,'w','utf-8')
-        infile_tree.write(output,encoding='utf-8',method='xml',pretty_print=True)
-        output.close()
+        #output = codecs.open(str(outpath + outfile) ,mode='w',encoding='utf-8')
+        infile_tree.write(str(outpath + outfile),encoding='utf-8',method='xml',pretty_print=True)
+        #output.close()
         return True
     except:
-        print "Could not write %s to %s" %(infile, str(outpath + outfile))
+        print("Could not write %s to %s" %(infile, str(outpath + outfile)))
         return True
-
 def main():
     infile = 'Sentinel-2A_MP_ACQ__KML_20170824T110000_20170910T140000.kml'
     infile = 'S2A_acquisition_plan.kml'
@@ -98,7 +96,7 @@ def main():
     outfile = 'test.kml'
     extrac_values = extract_S2_entries(infile, outfile, outpath)
     if extrac_values:
-        print "Script worked!"
+        print("Script worked!")
 
 if __name__=='__main__':
     main()
