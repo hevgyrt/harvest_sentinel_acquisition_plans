@@ -79,13 +79,13 @@ for li in liElements:
             if href.startswith('/documents'):
                 element_text = c.text
                 start_text = element_text.split()[0]
-                if not element_text.startswith('Sentinel'):
-                    if href.endswith('.kml'):
-                        kml_dict[href.split('/')[-1]] = str(url_kml_prefix + href)
-                    else:
-                        for i in range(len(href.split('/'))):
-                            if href.split('/')[-i].endswith('kml'):
-                                kml_dict[href.split('/')[-i]] = str(url_kml_prefix + href)
+                #if not element_text.startswith('Sentinel'):
+                if href.endswith('.kml'):
+                    kml_dict[href.split('/')[-1]] = str(url_kml_prefix + href)
+                else:
+                    for i in range(len(href.split('/'))):
+                        if href.split('/')[-i].endswith('kml'):
+                            kml_dict[href.split('/')[-i]] = str(url_kml_prefix + href)
 
 
 
