@@ -1,4 +1,4 @@
-#!usr/bin/python2.7
+#!/usr/bin/python
 """ Script containing method for extracting polygons within a defined AOI from
     Sentinel-2 .kml files distributed at
     https://sentinel.esa.int/web/sentinel/missions/sentinel-2/acquisition-plans
@@ -88,6 +88,7 @@ def extract_S2_entries(infile, outfile, outpath):
     except:
         print("Could not write %s to %s" %(infile, str(outpath + outfile)))
         return True
+    
 def main():
     infile = 'Sentinel-2A_MP_ACQ__KML_20170824T110000_20170910T140000.kml'
     infile = 'S2A_acquisition_plan.kml'

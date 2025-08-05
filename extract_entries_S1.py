@@ -1,4 +1,4 @@
-#!usr/bin/python2.7
+#!/usr/bin/python
 """ Script containing method for extracting polygons within a defined AOI from
     Sentinel-1 .kml files distributed at:
     https://sentinel.esa.int/web/sentinel/missions/sentinel-1/observation-scenario/acquisition-segments
